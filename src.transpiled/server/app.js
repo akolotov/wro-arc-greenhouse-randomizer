@@ -19,6 +19,7 @@ routes.get('/field', async function (req, res, next) {
   res.send(field);
   next();
 });
+console.log(path.join('public'));
 routes.use('/', _express.default.static(path.join('public')));
 app.use('/', routes);
 const port = process.env.PORT || 3000; // Fire it up!

@@ -8,7 +8,7 @@ let field = null;
 export default async function getField() {
     if(field == null) {
         const Http = new XMLHttpRequest();
-        const url = 'http://127.0.0.1:3000/field';
+        const url = '/field';
         Http.open("GET", url);
 
         return new Promise((resolve) => {

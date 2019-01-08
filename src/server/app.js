@@ -12,6 +12,7 @@ routes.get('/field', async function(req, res, next) {
     next();
 });
 
+console.log(path.join('public'));
 routes.use('/',express.static(path.join('public')));
 
 app.use('/', routes);
