@@ -10,12 +10,14 @@ fi
 if [[ ! -e "${ROOT}/generator/bin/generator" ]]; then
     echo 'The generator is not built; Proceed to building the generator'
 
+    cd ${ROOT}/scripts
     if bash "${ROOT}/scripts/build-generator.sh"; then
         :
     else
         echo 'Generator build failed'
         exit -1
     fi
+    cd ${ROOT}
 fi
 
 if [[ ! -e "${ROOT}/src.transpiled" ]]; then
