@@ -9,7 +9,7 @@ window.onload = () => {
     getField().then((field) => {
         render(field);
         createQR(field);
-    }).catch(e => {
-        console.log(e);
+    }).catch(err => {
+        console.log(err);
     });
 };

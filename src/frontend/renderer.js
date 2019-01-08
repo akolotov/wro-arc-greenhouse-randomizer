@@ -26,8 +26,8 @@ function point(x, y) {
 
 function createApp() {
     initPixi();
-    app = new PIXI.Application({width: MARGIN + WIDTH, height: MARGIN + HEIGHT});
-    app.view.id = "pixi-canvas";
+    let canvas = document.getElementById("field-canvas");
+    app = new PIXI.Application({width: MARGIN + WIDTH, height: MARGIN + HEIGHT, view: canvas});
     document.body.appendChild(app.view);
     app.renderer.backgroundColor = 0xFFFFFF;
 }
@@ -72,20 +72,21 @@ function drawParkingZone(p1, p2, p3, p4) {
     }
     let border = new PIXI.Graphics();
 
-    border.lineStyle(3, 0x00FF00);
-    border.moveTo(p[0].x, p[0].y);
-    border.lineTo(p[1].x, p[1].y);
+    border.lineStyle(3, 0x00AA00);
+    border.moveTo(0, 0);
+    border.lineTo(p[1].x - p[0].x, p[1].y - p[0].y);
 
     border.lineStyle(3, 0x000000);
-    border.lineTo(p[2].x, p[2].y);
-    border.lineTo(p[3].x, p[3].y);
+    border.lineTo(p[2].x - p[0].x, p[2].y - p[0].y);
+    border.lineTo(p[3].x - p[0].x, p[3].y - p[0].y);
 
-    border.lineStyle(2, 0x444444);
-    border.moveTo(p[0].x, p[0].y);
-    border.drawCircle(sm_to_px(345 + 17));
+    border.pivot.x = (p[2].x - p[0].x) / 2;
+    border.pivot.y = (p[2].y - p[0].y) / 2;
+
+    border.position.x = (p[0].x + p[2].x) / 2;
+    border.position.y = (p[0].y + p[2].y) / 2;
 
     app.stage.addChild(border);
-
 }
 
 
@@ -122,9 +123,9 @@ export function render(field) {
 
     border.moveTo(MARGIN, MARGIN);
     border.lineTo(MARGIN + WIDTH, MARGIN);
-    border.lineTo(MARGIN + WIDTH, MARGIN + HEIGHT - 1);
-    border.lineTo(MARGIN, MARGIN + HEIGHT - 1);
-    border.lineTo(MARGIN + 1, MARGIN);
+    border.lineTo(MARGIN + WIDTH, MARGIN + HEIGHT - 3);
+    border.lineTo(MARGIN, MARGIN + HEIGHT - 3);
+    border.lineTo(MARGIN, MARGIN);
 
     app.stage.addChild(border);
 

@@ -5,16 +5,19 @@
     <meta charset="UTF-8">
     <title>Greenhouse Generator</title>
 
+    <link rel="stylesheet" type="text/css" href="style.css">
     <script src="bundle.js"></script>
 
 </head>
 
 <body>
 
-    <aside>
-        <p id="encoded-field"></p>
-        <canvas id="qr-code"></canvas>
-    </aside>
+    <canvas id="field-canvas"></canvas>
+
+    <div class="column">
+        <p id="encoded-field" class="row"></p>
+        <canvas id="qr-code" class="row"></canvas>
+    </div>
 
 </body>
 

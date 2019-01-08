@@ -1,25 +1,9 @@
-var path = require('path');
-var express = require('express');
-const util = require('util');
+import * as path from 'path';
+import express from 'express';
+import generateField from './generate_field';
 
 var app = express();
 
-const generator_path = "generator/bin/generator";
-
-async function generateField() {
-    const exec = util.promisify(require('child_process').exec);
-
-    const { stdout, stderr } = await exec(generator_path);
-
-    let f = {};
-    f = JSON.parse(stdout);
-    if(stderr.toString().length > 0)
-        f.err = stderr;
-    else {
-        f.err = null;
-    }
-    return f;
-}
 
 app.get('/field', async function(req, res, next) {
     let field = (await generateField());

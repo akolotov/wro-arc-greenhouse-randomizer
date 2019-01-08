@@ -57,5 +57,3 @@ export default class Field {
 
 
 }
-
-module.exports = Field;
