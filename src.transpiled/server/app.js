@@ -17,8 +17,9 @@ app.get('/field', async function (req, res, next) {
   next();
 }); // Serve static files
 
-app.use('/', _express.default.static(path.join('public'))); // Fire it up!
+app.use('/', _express.default.static(path.join('public')));
+const port = process.env.PORT || 3000; // Fire it up!
 
-app.listen(5000);
-console.log('Listening on port 5000');
+app.listen(port);
+console.log('Listening on port' + port);
 //# sourceMappingURL=app.js.map
