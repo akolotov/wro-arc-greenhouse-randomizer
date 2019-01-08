@@ -4,16 +4,17 @@ import generateField from './generate_field';
 
 var app = express();
 
+const routes = express.Router();
 
-app.get('/field', async function(req, res, next) {
+routes.get('/field', async function(req, res, next) {
     let field = (await generateField());
     res.send(field);
     next();
 });
 
+routes.use('/',express.static(path.join('public')));
 
-// Serve static files
-app.use('/', express.static(path.join('public')));
+app.use('/', routes);
 
 const port = process.env.PORT || 3000;
 // Fire it up!
