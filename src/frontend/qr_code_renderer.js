@@ -24,4 +24,10 @@ export default function createQR(field) {
             if (error) console.error(error);
         }
     );
+
+    var ctx = canvas.getContext("2d");
+    ctx.lineWidth = "3";
+    ctx.strokeStyle = "black";
+    ctx.rect(5, 5, 118, 118);
+    ctx.stroke();
 }

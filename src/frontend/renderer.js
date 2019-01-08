@@ -3,6 +3,7 @@
 
 import * as PIXI from 'pixi.js';
 import Color from '../util/color';
+import {encodePoint} from '../util/encode_field';
 
 const WIDTH = sm_to_px(2300)+1;
 const HEIGHT = sm_to_px(2300)+1;
@@ -10,6 +11,50 @@ const HEIGHT = sm_to_px(2300)+1;
 const MARGIN = 30;
 
 var app = null;
+
+
+
+export function render(field) {
+    createApp();
+
+    drawBorder();
+
+    // draw letters on field border (as in the sea battle game)
+    for (let i = 1; i <= 20; i++) {
+        drawText(i * sm_to_px(115), 10, String.fromCharCode('A'.charCodeAt(0) + i - 1));
+        drawText(10, i * sm_to_px(115), String.fromCharCode('A'.charCodeAt(0) + i - 1));
+    }
+
+    // draw crosses on the field
+    for (let i = sm_to_px(115); i <= sm_to_px(2300); i += sm_to_px(115)) {
+        for (let j = sm_to_px(115); j <= sm_to_px(2300); j += sm_to_px(115)) {
+            drawCross(MARGIN + i, MARGIN + j, 5);
+        }
+    }
+
+    drawParkingZone(...field.parkingZone);
+    for(let i = 0; i < 5; i++) {
+        drawBox(field.boxes[i], Color[field.boxColors[i]].value);
+        for(let p of [point(115 - 30, 0), point(0, 115 - 30), point(230 - 60, 115 - 30), point(115 - 30, 230 - 60)]) {
+            drawBox(add(field.boxes[i], p), Color[field.cubeColors[i]].value, 60);
+        }
+    }
+
+    // draw strings with field element coordinates
+    let descr = document.getElementById("field-descr");
+    let parkingZoneDescr = document.createElement("p");
+    let dir = {x: field.parkingZone[0].x + field.parkingZoneDirection.x,
+               y: field.parkingZone[0].y + field.parkingZoneDirection.y};
+    parkingZoneDescr.appendChild(document.createTextNode(
+        "Parking Zone: " + encodePoint(field.parkingZone[0]) + " " + encodePoint(dir)));
+    descr.appendChild(parkingZoneDescr);
+    for(let i = 0; i < 5; i++) {
+        let boxDescr = document.createElement("p");
+        boxDescr.appendChild(document.createTextNode(field.boxColors[i] + ": " + encodePoint(field.boxes[i])));
+        descr.appendChild(boxDescr);
+    }
+}
+
 
 
 function add(p1, p2) {
@@ -28,7 +73,6 @@ function createApp() {
     initPixi();
     let canvas = document.getElementById("field-canvas");
     app = new PIXI.Application({width: MARGIN + WIDTH, height: MARGIN + HEIGHT, view: canvas});
-    document.body.appendChild(app.view);
     app.renderer.backgroundColor = 0xFFFFFF;
 }
 
@@ -38,10 +82,26 @@ function initPixi() {
     let type = "WebGL";
 
     if(!PIXI.utils.isWebGLSupported()){
-        type = "canvas"
+        type = "canvas";
     }
 
     PIXI.utils.sayHello(type);
+}
+
+
+
+function drawBorder() {
+    let border = new PIXI.Graphics();
+
+    border.lineStyle(5, 0x000000);
+
+    border.moveTo(MARGIN, MARGIN);
+    border.lineTo(MARGIN + WIDTH - 3, MARGIN);
+    border.lineTo(MARGIN + WIDTH - 3, MARGIN + HEIGHT - 3);
+    border.lineTo(MARGIN, MARGIN + HEIGHT - 3);
+    border.lineTo(MARGIN, MARGIN);
+
+    app.stage.addChild(border);
 }
 
 
@@ -110,43 +170,4 @@ function drawText(x, y, text) {
     textObj.y = y;
 
     app.stage.addChild(textObj);
-}
-
-
-
-export function render(field) {
-    createApp();
-
-    let border = new PIXI.Graphics();
-
-    border.lineStyle(5, 0x000000);
-
-    border.moveTo(MARGIN, MARGIN);
-    border.lineTo(MARGIN + WIDTH, MARGIN);
-    border.lineTo(MARGIN + WIDTH, MARGIN + HEIGHT - 3);
-    border.lineTo(MARGIN, MARGIN + HEIGHT - 3);
-    border.lineTo(MARGIN, MARGIN);
-
-    app.stage.addChild(border);
-
-    for (let i = 1; i <= 20; i++) {
-        drawText(i * sm_to_px(115), 10, String.fromCharCode('A'.charCodeAt(0) + i - 1));
-        drawText(10, i * sm_to_px(115), String.fromCharCode('A'.charCodeAt(0) + i - 1));
-    }
-
-    for (let i = sm_to_px(115); i <= sm_to_px(2300); i += sm_to_px(115)) {
-        for (let j = sm_to_px(115); j <= sm_to_px(2300); j += sm_to_px(115)) {
-            drawCross(MARGIN + i, MARGIN + j, 5);
-        }
-    }
-
-    if(field.parkingZone != null) {
-        drawParkingZone(...field.parkingZone);
-        for(let i = 0; i < 5; i++) {
-            drawBox(field.boxes[i], Color[field.boxColors[i]].value);
-            for(let p of [point(115 - 30, 0), point(0, 115 - 30), point(230 - 60, 115 - 30), point(115 - 30, 230 - 60)]) {
-                drawBox(add(field.boxes[i], p), Color[field.cubeColors[i]].value, 60);
-            }
-        }
-    }
 }

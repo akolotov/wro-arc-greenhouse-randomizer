@@ -10,7 +10,7 @@ fi
 if [[ ! -e "${ROOT}/generator/bin/generator" ]]; then
     echo 'The generator is not built; Proceed to building the generator'
 
-    if ./build-generator.sh; then
+    if ${ROOT}/build-generator.sh; then
         :
     else
         echo 'Generator build failed'

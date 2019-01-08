@@ -17,3 +17,9 @@
     margin: auto;
     display: block;
 }
+
+#field-descr {
+    display: flex;
+    align-content: flex-start;
+    flex-direction: column;
+}
