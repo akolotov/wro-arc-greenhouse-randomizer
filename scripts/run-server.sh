@@ -1,28 +1,24 @@
 #!/usr/bin/env bash
 
-ROOT='.'
-
-if [[ ! -e "${ROOT}/node_modules" ]]; then
-    cd ${ROOT} && npm install
-    cd scripts
+if [[ ! -e "node_modules" ]]; then
+    npm install
 fi
 
-if [[ ! -e "${ROOT}/generator/bin/generator" ]]; then
+if [[ ! -e "generator/bin/generator" ]]; then
     echo 'The generator is not built; Proceed to building the generator'
 
-    cd ${ROOT}/scripts
-    if bash "${ROOT}/scripts/build-generator.sh"; then
+    cd "scripts"
+    if bash "build-generator.sh"; then
         :
     else
         echo 'Generator build failed'
         exit -1
     fi
-    cd ${ROOT}
+    cd ".."
 fi
 
-if [[ ! -e "${ROOT}/src.transpiled" ]]; then
+if [[ ! -e "src.transpiled" ]]; then
     echo 'The code is not transpiled and packed; Proceed to transpiling the server and packing frontend'
-    cd ${ROOT}
     if npm run build; then
         :
     else
@@ -31,11 +27,9 @@ if [[ ! -e "${ROOT}/src.transpiled" ]]; then
     fi
 fi
 
-if [[ ! -e "${ROOT}/public/bundle.js" ]]; then
-    cd ${ROOT}
+if [[ ! -e "public/bundle.js" ]]; then
     npm run pack
-    cd scripts
 fi
 
 echo 'Running the server...'
-node "${ROOT}/src.transpiled/server/app.js"
+node "src.transpiled/server/app.js"
