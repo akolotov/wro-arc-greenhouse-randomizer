@@ -7,8 +7,8 @@
     "build": "babel src --out-dir src.transpiled --source-maps",
     "pack": "webpack",
     "start": "bash scripts/run-server.sh",
-    "test": "npm run build && mocha src.transpiled/server/test && mocha src.transpiled/util/test"
-    "heroku-postbuild": "npm install",
+    "test": "npm run build && mocha src.transpiled/server/test && mocha src.transpiled/util/test",
+    "heroku-postbuild": "npm install"
   },
   "author": "Harrm",
   "dependencies": {
