@@ -222,10 +222,10 @@ bool FieldGenerator::tryPutBox(Box box) {
     auto loc = box.location;
     freePoints.erase(std::remove_if(freePoints.begin(), freePoints.end(),
             [&loc](auto point) {
-                return point.x > (loc.left - Field::CELL_SIZE * 3) &&
-                       point.x < (loc.right + Field::CELL_SIZE * 3) &&
-                       point.y > (loc.top - Field::CELL_SIZE * 3) &&
-                       point.y < (loc.bottom + Field::CELL_SIZE * 3);}), freePoints.end());
+                return point.x >= (loc.left - Field::CELL_SIZE * 3) &&
+                       point.x <= (loc.right + Field::CELL_SIZE * 3) &&
+                       point.y >= (loc.top - Field::CELL_SIZE * 3) &&
+                       point.y <= (loc.bottom + Field::CELL_SIZE * 3);}), freePoints.end());
 
     return true;
 }
