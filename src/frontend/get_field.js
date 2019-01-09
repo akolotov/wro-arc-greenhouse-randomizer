@@ -16,7 +16,6 @@ export default async function getField() {
             Http.onreadystatechange = function () {
                 if (this.readyState === 4 && this.status === 200) {
                     field = JSON.parse(this.responseText);
-                    console.log(field);
                     field = new Field(field);
                     resolve(field);
                 }
