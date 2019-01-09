@@ -47825,7 +47825,7 @@ function render(field, encoded_descr) {
         if(i !== blueIdx && i !== firstIdx && i !== secondIdx) {
             p1 = {x: field.boxes[i].right, y: field.boxes[i].top};
             p2 = {x: field.boxes[i].left, y: field.boxes[i].bott};
-            if (Object(_util_random__WEBPACK_IMPORTED_MODULE_3__["nextIntIn"])(0, 1) === 0) {
+            if (Object(_util_random__WEBPACK_IMPORTED_MODULE_3__["nextIntIn"])(0, 2) === 0) {
                 p1 = {x: field.boxes[i].left, y: field.boxes[i].top};
                 p2 = {x: field.boxes[i].right, y: field.boxes[i].bott};
             }
@@ -48054,15 +48054,15 @@ function encodeField(field) {
 
     // blue box
     let blueIdx = field.boxColors.indexOf("Blue");
-    res += encodeBox(field.boxes[blueIdx]);
+    res += encodeBox(field.boxes[blueIdx], Object(_random__WEBPACK_IMPORTED_MODULE_0__["nextIntIn"])(0, 2));
 
     // first box
     let firstIdx = field.boxColors.indexOf(field.cubeColors[blueIdx]);
-    res += encodeBox(field.boxes[firstIdx]);
+    res += encodeBox(field.boxes[firstIdx], Object(_random__WEBPACK_IMPORTED_MODULE_0__["nextIntIn"])(0, 2));
 
     // second box
     let secondIdx = field.boxColors.indexOf(field.cubeColors[firstIdx]);
-    res += encodeBox(field.boxes[secondIdx]);
+    res += encodeBox(field.boxes[secondIdx], Object(_random__WEBPACK_IMPORTED_MODULE_0__["nextIntIn"])(0, 2));
 
     return res;
 }

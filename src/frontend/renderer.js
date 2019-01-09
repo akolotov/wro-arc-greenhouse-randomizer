@@ -66,7 +66,7 @@ export function render(field, encoded_descr) {
         if(i !== blueIdx && i !== firstIdx && i !== secondIdx) {
             p1 = {x: field.boxes[i].right, y: field.boxes[i].top};
             p2 = {x: field.boxes[i].left, y: field.boxes[i].bott};
-            if (nextIntIn(0, 1) === 0) {
+            if (nextIntIn(0, 2) === 0) {
                 p1 = {x: field.boxes[i].left, y: field.boxes[i].top};
                 p2 = {x: field.boxes[i].right, y: field.boxes[i].bott};
             }
