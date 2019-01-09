@@ -34,8 +34,9 @@ Field FieldGenerator::generate() {
         auto p = std::begin(freePoints) + dist(rand);
         if(tryPutBox(Box(*p))) {
             count++;
+        } else {
+            freePoints.erase(p);
         }
-        freePoints.erase(p);
         if(freePoints.empty()) {
             throw std::runtime_error("Generation failed: Couldn't arrange the boxes");
         }
@@ -112,6 +113,8 @@ bool FieldGenerator::isPassable() const {
         throw std::runtime_error("Passability Check Error: Boxes generation stage is incomplete!");
     }
 
+
+
     return true;
 }
 
@@ -151,7 +154,7 @@ void FieldGenerator::generateTargetColors() {
     std::vector<Box> v(f->boxes.begin(), f->boxes.end());
     // can't use shuffle on a list (requires random access), but can use it on a vector
     std::shuffle(v.begin(), v.end(), rand);
-    
+
     Color first = Color::Black;
     Color second = Color::Black;
     for (Box& b: v) {
@@ -197,7 +200,8 @@ void FieldGenerator::generateTargetColors() {
 }
 
 
-
+// return true and updates free points if a box is put successfully
+// otherwise returns false
 bool FieldGenerator::tryPutBox(Box box) {
     if(!isBoxPositionValid(box)) {
         return false;
@@ -215,6 +219,13 @@ bool FieldGenerator::tryPutBox(Box box) {
         return false;
     }
     f->boxes.push_back(box);
+    auto loc = box.location;
+    freePoints.erase(std::remove_if(freePoints.begin(), freePoints.end(),
+            [&loc](auto point) {
+                return point.x > (loc.left - Field::CELL_SIZE * 3) &&
+                       point.x < (loc.right + Field::CELL_SIZE * 3) &&
+                       point.y > (loc.top - Field::CELL_SIZE * 3) &&
+                       point.y < (loc.bottom + Field::CELL_SIZE * 3);}), freePoints.end());
 
     return true;
 }
