@@ -23,10 +23,10 @@ public:
         ss << ",\n";
         ss << "\"parkingZoneDirection\": " << f.parkingZone.direction << ",\n";
 
-        ss << collectionToString<Box, Point>("boxes",
+        ss << collectionToString<Box, Rect>("boxes",
                                     f.boxes.begin(),
                                     f.boxes.end(),
-                                    [](Box b) { return b.location.leftTop(); });
+                                    [](Box b) { return b.location; });
         ss << ",\n";
         ss << collectionToString<Box, std::string>("boxColors",
                                           f.boxes.begin(),

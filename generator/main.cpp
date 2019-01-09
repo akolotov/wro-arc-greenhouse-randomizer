@@ -9,7 +9,7 @@ int main() {
     FieldGenerator generator;
 
     int fails = 0;
-    while (fails < 100) {
+    while (fails < 1000) {
         try {
             Field f = generator.generate();
 

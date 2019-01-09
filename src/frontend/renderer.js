@@ -4,6 +4,7 @@
 import * as PIXI from 'pixi.js';
 import Color from '../util/color';
 import {encodePoint} from '../util/encode_field';
+import {nextIntIn} from "../util/random";
 
 const WIDTH = sm_to_px(2300)+1;
 const HEIGHT = sm_to_px(2300)+1;
@@ -14,7 +15,9 @@ var app = null;
 
 
 
-export function render(field) {
+// field - an object of type Field, containing the description of the field to render
+// encoded_descr - a string with some important data about the field
+export function render(field, encoded_descr) {
     createApp();
 
     drawBorder();
@@ -36,29 +39,53 @@ export function render(field) {
     for(let i = 0; i < 5; i++) {
         drawBox(field.boxes[i], Color[field.boxColors[i]].value);
         for(let p of [point(115 - 30, 0), point(0, 115 - 30), point(230 - 60, 115 - 30), point(115 - 30, 230 - 60)]) {
-            drawBox(add(field.boxes[i], p), Color[field.cubeColors[i]].value, 60);
+            let b = field.boxes[i];
+            drawBox({top: b.top + p.y, left: b.left + p.x, bott: b.top + p.y + 60, right: b.left + p.x + 60},
+                Color[field.cubeColors[i]].value);
         }
     }
 
     // draw strings with field element coordinates
     let descr = document.getElementById("field-descr");
     let parkingZoneDescr = document.createElement("p");
+    parkingZoneDescr.setAttribute("class", "descr-paragraph");
     let dir = {x: field.parkingZone[0].x + field.parkingZoneDirection.x,
                y: field.parkingZone[0].y + field.parkingZoneDirection.y};
     parkingZoneDescr.appendChild(document.createTextNode(
         "Parking Zone: " + encodePoint(field.parkingZone[0]) + " " + encodePoint(dir)));
     descr.appendChild(parkingZoneDescr);
+
+    let blueIdx = field.boxColors.indexOf("Blue");
+    let firstIdx = field.boxColors.indexOf(field.cubeColors[blueIdx]);
+    let secondIdx = field.boxColors.indexOf(field.cubeColors[firstIdx]);
+
     for(let i = 0; i < 5; i++) {
         let boxDescr = document.createElement("p");
-        boxDescr.appendChild(document.createTextNode(field.boxColors[i] + ": " + encodePoint(field.boxes[i])));
+        let p1;
+        let p2;
+        if(i !== blueIdx && i !== firstIdx && i !== secondIdx) {
+            p1 = {x: field.boxes[i].right, y: field.boxes[i].top};
+            p2 = {x: field.boxes[i].left, y: field.boxes[i].bott};
+            if (nextIntIn(0, 1) === 0) {
+                p1 = {x: field.boxes[i].left, y: field.boxes[i].top};
+                p2 = {x: field.boxes[i].right, y: field.boxes[i].bott};
+            }
+            p1 = encodePoint(p1);
+            p2 = encodePoint(p2);
+
+        } else {
+            let start = (i === blueIdx) ? 4
+                      : (i === firstIdx) ? 8
+                      : (i === secondIdx) ? 12
+                      : undefined;
+            p1 = encoded_descr.slice(start, start + 2);
+            p2 = encoded_descr.slice(start + 2, start + 4);
+        }
+        boxDescr.appendChild(document.createTextNode(field.boxColors[i] + ": " + p1 + " " + p2));
+        boxDescr.setAttribute("class", "descr-paragraph");
         descr.appendChild(boxDescr);
     }
-}
 
-
-
-function add(p1, p2) {
-    return {x: p1.x + p2.x, y: p1.y + p2.y};
 }
 
 
@@ -151,12 +178,13 @@ function drawParkingZone(p1, p2, p3, p4) {
 
 
 
-function drawBox(point, color=0x0000FF, size=230, fill=true) {
+function drawBox(rect, color=0x0000FF, fill=true) {
     let border = new PIXI.Graphics();
 
     border.lineStyle(1, 0x000000);
     if(fill) border.beginFill(color);
-    border.drawRect(MARGIN + sm_to_px(point.x), MARGIN + sm_to_px(point.y), sm_to_px(size), sm_to_px(size));
+    border.drawRect(MARGIN + sm_to_px(rect.left), MARGIN + sm_to_px(rect.top),
+                    sm_to_px(rect.right - rect.left), sm_to_px(rect.bott - rect.top));
     if(fill) border.endFill();
 
     app.stage.addChild(border);

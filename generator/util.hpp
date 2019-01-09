@@ -151,7 +151,7 @@ static std::ostream& operator<<(std::ostream& os, Point p) {
 }
 
 static std::ostream& operator<<(std::ostream& os, Rect rect) {
-    os << "{\"top\": " << rect.top << " \"left\": " << rect.left << " \"bott\": " << rect.bottom << " \"right\": " << rect.right << " }";
+    os << "{\"top\": " << rect.top << ", \"left\": " << rect.left << ", \"bott\": " << rect.bottom << ", \"right\": " << rect.right << " }";
     return os;
 }
 

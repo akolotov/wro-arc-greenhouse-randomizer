@@ -9,6 +9,11 @@ export default class Field {
             return typeof p.x === 'number' && typeof p.y === 'number';
         }
 
+        function isRect(p) {
+            return typeof p.top === 'number' && typeof p.left === 'number' &&
+                typeof p.bott === 'number' && typeof p.right === 'number';
+        }
+
         function isValidArrayOf(arr, num, validator_callback) {
             if(!Array.isArray(arr) || arr.length !== num) return false;
             for(let v of arr) {
@@ -33,11 +38,11 @@ export default class Field {
             throw Error("'parkingZoneDirection' field of the description should be an point; Got " + descr.parkingZoneDirection);
         }
 
-        if(isValidArrayOf(descr.boxes, 5, isPoint)) { // all elements are points
+        if(isValidArrayOf(descr.boxes, 5, isRect)) { // all elements are rects
             this.boxes = descr.boxes;
 
         } else {
-            throw Error("'boxes' field of the description should be an array of five points; Got " + descr.boxes);
+            throw Error("'boxes' field of the description should be an array of five rects; Got " + descr.boxes);
         }
 
         if(isValidArrayOf(descr.boxColors, 5, v => typeof Color.hasOwnProperty(v))) {

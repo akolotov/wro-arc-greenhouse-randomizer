@@ -5,18 +5,16 @@ const QRCode = require('qrcode');
 
 
 
-export default function createQR(field) {
+export default function createQR(field, code) {
     let canvas = document.getElementById("qr-code");
-
-    let code = encodeField(field);
 
     let encoded_text = document.getElementById("encoded-field");
     encoded_text.appendChild(document.createTextNode(code));
 
     QRCode.toCanvas(canvas, encodeField(field),
         {
-            width: 128,
-            height: 128,
+            width: 412,
+            height: 412,
             color: { dark: "#000000", light : "#ffffff" },
             errorCorrectionLevel: 'H'
         },
@@ -28,6 +26,6 @@ export default function createQR(field) {
     var ctx = canvas.getContext("2d");
     ctx.lineWidth = "3";
     ctx.strokeStyle = "black";
-    ctx.rect(5, 5, 118, 118);
+    ctx.rect(5, 5, 402, 402);
     ctx.stroke();
 }

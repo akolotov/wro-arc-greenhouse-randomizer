@@ -7,17 +7,17 @@ export default function getMockField() {
 export function getMockFieldDescription() {
     return {
         parkingZone: [
-            { x: 460, y: 805 },
-            { x: 640, y: 491 },
-            { x: 954, y: 671 },
-            { x: 774, y: 985 }],
-        parkingZoneDirection: { x: -230, y: -230 },
+            { x: 1150, y: 920 },
+            { x: 1458, y: 765 },
+            { x: 1613, y: 1073 },
+            { x: 1305, y: 1228 }],
+        parkingZoneDirection: { x: 230, y: -115 },
         boxes: [
-            { x: 1955, y: 1725 },
-            { x: 1725, y: 920 },
-            { x: 1150, y: 230 },
-            { x: 1495, y: 1265 },
-            { x: 1840, y: 575 }],
+            {top: 1725, left: 1955, bott: 1955, right: 2185 },
+            {top: 115, left: 575, bott: 345, right: 805 },
+            {top: 1840, left: 1150, bott: 2070, right: 1380 },
+            {top: 460, left: 230, bott: 690, right: 460 },
+            {top: 1380, left: 1840, bott: 1610, right: 2070 }],
         boxColors: [
             "Blue",
             "Green",
@@ -25,9 +25,9 @@ export function getMockFieldDescription() {
             "Red",
             "Yellow"],
         cubeColors: [
-            "Green",
             "Orange",
             "Blue",
+            "Green",
             "Yellow",
             "Red"]
     };

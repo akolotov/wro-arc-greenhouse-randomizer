@@ -148,50 +148,51 @@ void FieldGenerator::generateTargetColors() {
 
     std::vector<Color> colors = {Color::Green, Color::Orange, Color::Red, Color::Yellow};
 
-    {
-        std::vector<std::reference_wrapper<Box>> v(f->boxes.begin(), f->boxes.end());
-        // can't use shuffle on a list (requires random access), but can use it on a vector
-        std::shuffle(v.begin(), v.end(), rand);
-    }
-    Box* blue = nullptr;
-    Box* first = nullptr;
-    Box* second = nullptr;
-    for (Box& b: f->boxes) {
+    std::vector<Box> v(f->boxes.begin(), f->boxes.end());
+    // can't use shuffle on a list (requires random access), but can use it on a vector
+    std::shuffle(v.begin(), v.end(), rand);
+    
+    Color first = Color::Black;
+    Color second = Color::Black;
+    for (Box& b: v) {
         if (b.ownColor == Color::Blue) {
-            blue = &b;
+            ;
 
-        } else if (first == nullptr) {
-            first = &b;
+        } else if (first == Color::Black) {
+            first = b.ownColor;
 
-        } else if (second == nullptr) {
-            second = &b;
+        } else if (second == Color::Black) {
+            second = b.ownColor;
         }
     }
 
-    blue->targetColor = first->ownColor;
-    first->targetColor = second->ownColor;
-    second->targetColor = blue->ownColor;
+    auto blueBox = std::find_if(f->boxes.begin(), f->boxes.end(), [](auto b) { return b.ownColor == Color::Blue; });
+    auto firstBox = std::find_if(f->boxes.begin(), f->boxes.end(), [first](auto b) { return b.ownColor == first; });
+    auto secondBox = std::find_if(f->boxes.begin(), f->boxes.end(), [second](auto b) { return b.ownColor == second; });
+    blueBox->targetColor = firstBox->ownColor;
+    firstBox->targetColor = secondBox->ownColor;
+    secondBox->targetColor = blueBox->ownColor;
 
     std::list<Box> leftBoxes = f->boxes;
-    leftBoxes.remove_if([blue, first, second](auto& b) {
-        return b.ownColor == blue->ownColor ||
-               b.ownColor == first->ownColor ||
-               b.ownColor == second->ownColor;
+    leftBoxes.remove_if([blueBox, firstBox, secondBox](auto& b) {
+        return b.ownColor == blueBox->ownColor ||
+               b.ownColor == firstBox->ownColor ||
+               b.ownColor == secondBox->ownColor;
     });
-    std::remove(colors.begin(), colors.end(), blue->targetColor);
-    std::remove(colors.begin(), colors.end(), first->targetColor);
-    std::remove(colors.begin(), colors.end(), second->targetColor);
+    colors.erase(std::remove(colors.begin(), colors.end(), blueBox->targetColor), colors.end());
+    colors.erase(std::remove(colors.begin(), colors.end(), firstBox->targetColor), colors.end());
+    colors.erase(std::remove(colors.begin(), colors.end(), secondBox->targetColor), colors.end());
 
-    auto frontBox = std::find_if(f->boxes.begin(), f->boxes.end(), [&leftBoxes](auto b) {
+    Box& frontBox = *std::find_if(f->boxes.begin(), f->boxes.end(), [&leftBoxes](auto b) {
         return b.ownColor == leftBoxes.front().ownColor;
     });
-    frontBox->targetColor = (colors.front() == frontBox->ownColor)
+    frontBox.targetColor = (colors.front() == frontBox.ownColor)
             ? colors.back() : colors.front();
 
-    auto backBox = std::find_if(f->boxes.begin(), f->boxes.end(), [&leftBoxes](auto b) {
+    Box& backBox = *std::find_if(f->boxes.begin(), f->boxes.end(), [&leftBoxes](auto b) {
         return b.ownColor == leftBoxes.back().ownColor;
     });
-    backBox->targetColor = (colors.front() == backBox->ownColor)
+    backBox.targetColor = (colors.front() == backBox.ownColor)
             ? colors.back() : colors.front();
 }
 

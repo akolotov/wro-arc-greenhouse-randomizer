@@ -20,4 +20,4 @@ app.use('/', routes);
 const port = process.env.PORT || 3000;
 // Fire it up!
 app.listen(port);
-console.log('Listening on port' + port);
+console.log('Listening on port ' + port);

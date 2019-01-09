@@ -1,9 +1,19 @@
+import {nextIntIn} from "./random";
 
 export function encodePoint(p) {
     return String.fromCharCode('A'.charCodeAt(0) + Math.round(p.x/115)) + String.fromCharCode('A'.charCodeAt(0) + Math.round(p.y/115));
 }
 
-
+// 0 - top-left, bottom-right, 1 - top-right, bottom-left
+function encodeBox(box, key = nextIntIn(0, 1)) {
+    let p1 = {x: box.right, y: box.top};
+    let p2 = {x: box.left, y: box.bott};
+    if(key === 0) {
+        p1 = {x: box.left, y: box.top};
+        p2 = {x: box.right, y: box.bott};
+    }
+    return encodePoint(p1) + encodePoint(p2);
+}
 
 export default function encodeField(field) {
     let res = "";
@@ -18,15 +28,15 @@ export default function encodeField(field) {
 
     // blue box
     let blueIdx = field.boxColors.indexOf("Blue");
-    res += encodePoint(field.boxes[blueIdx]);
+    res += encodeBox(field.boxes[blueIdx]);
 
     // first box
     let firstIdx = field.boxColors.indexOf(field.cubeColors[blueIdx]);
-    res += encodePoint(field.boxes[firstIdx]);
+    res += encodeBox(field.boxes[firstIdx]);
 
     // second box
     let secondIdx = field.boxColors.indexOf(field.cubeColors[firstIdx]);
-    res += encodePoint(field.boxes[secondIdx]);
+    res += encodeBox(field.boxes[secondIdx]);
 
     return res;
 }
