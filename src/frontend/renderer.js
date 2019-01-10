@@ -52,7 +52,7 @@ export function render(field, encoded_descr) {
     let dir = {x: field.parkingZone[0].x + field.parkingZoneDirection.x,
                y: field.parkingZone[0].y + field.parkingZoneDirection.y};
     parkingZoneDescr.appendChild(document.createTextNode(
-        "Parking Zone: " + encodePoint(field.parkingZone[0]) + " " + encodePoint(dir)));
+        "Parking Zone: (" + encodePoint(field.parkingZone[0]) + " " + encodePoint(dir) + ")"));
     descr.appendChild(parkingZoneDescr);
 
     let blueIdx = field.boxColors.indexOf("Blue");
@@ -74,14 +74,14 @@ export function render(field, encoded_descr) {
             p2 = encodePoint(p2);
 
         } else {
-            let start = (i === blueIdx) ? 4
-                      : (i === firstIdx) ? 8
-                      : (i === secondIdx) ? 12
+            let start = (i === blueIdx) ? 9
+                      : (i === firstIdx) ? 18
+                      : (i === secondIdx) ? 27
                       : undefined;
-            p1 = encoded_descr.slice(start, start + 2);
-            p2 = encoded_descr.slice(start + 2, start + 4);
+            p1 = encoded_descr.slice(start + 1, start + 4);
+            p2 = encoded_descr.slice(start + 5, start + 8);
         }
-        boxDescr.appendChild(document.createTextNode(field.boxColors[i] + ": " + p1 + " " + p2));
+        boxDescr.appendChild(document.createTextNode(field.boxColors[i] + ": (" + p1 + " " + p2 + ")"));
         boxDescr.setAttribute("class", "descr-paragraph");
         descr.appendChild(boxDescr);
     }
@@ -123,8 +123,8 @@ function drawBorder() {
     border.lineStyle(5, 0x000000);
 
     border.moveTo(MARGIN, MARGIN);
-    border.lineTo(MARGIN + WIDTH - 3, MARGIN);
-    border.lineTo(MARGIN + WIDTH - 3, MARGIN + HEIGHT - 3);
+    border.lineTo(MARGIN + WIDTH - 2, MARGIN);
+    border.lineTo(MARGIN + WIDTH - 2, MARGIN + HEIGHT - 3);
     border.lineTo(MARGIN, MARGIN + HEIGHT - 3);
     border.lineTo(MARGIN, MARGIN);
 

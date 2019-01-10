@@ -1,7 +1,7 @@
 import {nextIntIn} from "./random";
 
 export function encodePoint(p) {
-    return String.fromCharCode('A'.charCodeAt(0) + Math.round(p.x/115)) + String.fromCharCode('A'.charCodeAt(0) + Math.round(p.y/115));
+    return String.fromCharCode('A'.charCodeAt(0) + Math.round(p.x/115)) + "," + String.fromCharCode('A'.charCodeAt(0) + Math.round(p.y/115));
 }
 
 // 0 - top-left, bottom-right, 1 - top-right, bottom-left
@@ -12,19 +12,19 @@ function encodeBox(box, key = nextIntIn(0, 1)) {
         p1 = {x: box.left, y: box.top};
         p2 = {x: box.right, y: box.bott};
     }
-    return encodePoint(p1) + encodePoint(p2);
+    return "(" + encodePoint(p1) + "," + encodePoint(p2) +")";
 }
 
 export default function encodeField(field) {
     let res = "";
 
     // parking zone top left point
-    res += encodePoint(field.parkingZone[0]);
+    res += "(" + encodePoint(field.parkingZone[0]) + ",";
 
     // parking zone direction point
     let dir = {x: field.parkingZone[0].x + field.parkingZoneDirection.x,
                y: field.parkingZone[0].y + field.parkingZoneDirection.y};
-    res += encodePoint(dir);
+    res += encodePoint(dir) + ")";
 
     // blue box
     let blueIdx = field.boxColors.indexOf("Blue");

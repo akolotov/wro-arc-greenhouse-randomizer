@@ -13,8 +13,8 @@ function createColor(name, v) {
 const Color = {"Blue": createColor("Blue", 0x10069F),
                "Red": createColor("Red", 0xF21320),
                "Green": createColor("Green", 0x44D62C),
-               "Orange": createColor("Orange", 0xFD5E00),
-               "Yellow": createColor("Yellow", 0xFDE900)};
+               "Orange": createColor("Orange", 0xFFA459),
+               "Yellow": createColor("Yellow", 0xFFFD47)};
 let colorNames = Object.keys(Color);
 
 function randomColor() {

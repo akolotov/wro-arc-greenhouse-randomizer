@@ -17,7 +17,7 @@ public:
     // zone that should be free of field objects
     static Rect getFreeZone(const Box& b);
 
-    bool isAroundParkingZone(const Box& b) const;
+    bool isAroundParkingZone(const Box& box) const;
 
 private:
 

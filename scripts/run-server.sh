@@ -17,14 +17,11 @@ if [[ ! -e "generator/bin/generator" ]]; then
     cd ".."
 fi
 
-if [[ ! -e "src.transpiled" ]]; then
-    echo 'The code is not transpiled and packed; Proceed to transpiling the server and packing frontend'
-    if npm run build; then
-        :
-    else
-        echo 'Server build failed'
-        exit -1
-    fi
+if npm run build; then
+    :
+else
+    echo 'Server build failed'
+    exit -1
 fi
 
 if [[ ! -e "public/bundle.js" ]]; then

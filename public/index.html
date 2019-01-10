@@ -12,17 +12,37 @@
 
 <body>
 
-    <div class="column">
-        <p id="encoded-field" class="row"></p>
-        <canvas id="qr-code" class="row"></canvas>
+    <header>
+        <img src="logo.png" style="margin-right: auto;">
+    </header>
+
+    <div style="display: flex; justify-content: center; align-content: center; width: 100%;">
+        <button style="background-color: orange;" onclick="location.reload();">
+            <p style="font-family: monospace; font-size: 2em; color: white">
+                RE-GENERATE!
+            </p>
+        </button>
     </div>
 
-    <div style="display: flex; flex-direction: row; flex-wrap: nowrap; align-content: flex-start;">
-        <div id="field-descr">
-
+    <div style="padding-bottom: 18px; padding-top: 18px;">
+        <div class="column">
+            <p id="encoded-field" class="row"></p>
+            <canvas id="qr-code" class="row"></canvas>
         </div>
-        <canvas id="field-canvas"></canvas>
+
+        <div id="field-view">
+            <div id="field-descr">
+
+            </div>
+            <canvas id="field-canvas"></canvas>
+        </div>
     </div>
+
+    <footer style="background-color: lightgrey; padding: 8px;">
+        <p>Made by: Vladimir Shcherba</p>
+        <p>Contact information: <a href="mailto:abrehchs@gmail.com">
+            abrehchs@gmail.com</a>.</p>
+    </footer>
 
 </body>
 

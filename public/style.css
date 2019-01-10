@@ -12,6 +12,13 @@
     margin: auto;
 }
 
+#field-view {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+}
+
 #encoded-field {
     padding: 12px;
     font-size: 2em;

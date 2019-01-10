@@ -3,6 +3,7 @@
 //
 
 #include <queue>
+#include <set>
 #include "FieldGenerator.hpp"
 
 
@@ -27,7 +28,7 @@ Field FieldGenerator::generate() {
     f = new Field(zone);
 
     updateFreePoints();
-
+    
     int count = 0;
     std::uniform_int_distribution dist(0, (int)freePoints.size() - 1);
     while(count < 5) {
@@ -95,15 +96,16 @@ Rect FieldGenerator::getFreeZone(const Box& b) {
 
 
 
-bool FieldGenerator::isAroundParkingZone(const Box& b) const {
+bool FieldGenerator::isAroundParkingZone(const Box& box) const {
     auto loc = f->parkingZone.location;
     auto contains = [loc](Point point) -> bool {
         return dist(point, loc.points[0]) < 460 ||
                dist(point, loc.points[3]) < 460;
         };
 
-    return contains(b.location.leftTop()) || contains(b.location.rightBottom()) ||
-           contains(b.location.leftBottom()) || contains(b.location.rightTop());
+
+    return contains(box.location.leftTop()) || contains(box.location.rightBottom()) ||
+           contains(box.location.leftBottom()) || contains(box.location.rightTop());
 }
 
 
@@ -150,53 +152,27 @@ void FieldGenerator::generateTargetColors() {
     }
 
     std::vector<Color> colors = {Color::Green, Color::Orange, Color::Red, Color::Yellow};
+    std::shuffle(colors.begin(), colors.end(), rand);
 
-    std::vector<Box> v(f->boxes.begin(), f->boxes.end());
-    // can't use shuffle on a list (requires random access), but can use it on a vector
-    std::shuffle(v.begin(), v.end(), rand);
+    auto& blueBox = *std::find_if(f->boxes.begin(), f->boxes.end(), [](auto b) { return b.ownColor == Color::Blue; });
+    blueBox.targetColor = colors.at(0);
+    colors.at(0) = Color::Blue;
 
-    Color first = Color::Black;
-    Color second = Color::Black;
-    for (Box& b: v) {
-        if (b.ownColor == Color::Blue) {
-            ;
-
-        } else if (first == Color::Black) {
-            first = b.ownColor;
-
-        } else if (second == Color::Black) {
-            second = b.ownColor;
+    auto& nextBox = *std::find_if(f->boxes.begin(), f->boxes.end(), [&blueBox](auto b) { return b.ownColor == blueBox.targetColor; });
+    nextBox.targetColor = *std::find_if(colors.begin(), colors.end(), [&nextBox](auto c) { return nextBox.ownColor != c && c != Color::Blue; });
+    colors.erase(std::remove(colors.begin(), colors.end(), nextBox.targetColor));
+    for(auto& box: f->boxes) {
+        if(box.ownColor != Color::Blue && box.ownColor != nextBox.ownColor) {
+            auto it = std::find_if(colors.begin(), colors.end(), [&box](auto c) { return box.ownColor != c; });
+            if(it != colors.end()) {
+                box.targetColor = *it;
+                colors.erase(it);
+            } else {
+                box.targetColor = colors.front();
+                std::swap(box.targetColor, nextBox.targetColor);
+            }
         }
     }
-
-    auto blueBox = std::find_if(f->boxes.begin(), f->boxes.end(), [](auto b) { return b.ownColor == Color::Blue; });
-    auto firstBox = std::find_if(f->boxes.begin(), f->boxes.end(), [first](auto b) { return b.ownColor == first; });
-    auto secondBox = std::find_if(f->boxes.begin(), f->boxes.end(), [second](auto b) { return b.ownColor == second; });
-    blueBox->targetColor = firstBox->ownColor;
-    firstBox->targetColor = secondBox->ownColor;
-    secondBox->targetColor = blueBox->ownColor;
-
-    std::list<Box> leftBoxes = f->boxes;
-    leftBoxes.remove_if([blueBox, firstBox, secondBox](auto& b) {
-        return b.ownColor == blueBox->ownColor ||
-               b.ownColor == firstBox->ownColor ||
-               b.ownColor == secondBox->ownColor;
-    });
-    colors.erase(std::remove(colors.begin(), colors.end(), blueBox->targetColor), colors.end());
-    colors.erase(std::remove(colors.begin(), colors.end(), firstBox->targetColor), colors.end());
-    colors.erase(std::remove(colors.begin(), colors.end(), secondBox->targetColor), colors.end());
-
-    Box& frontBox = *std::find_if(f->boxes.begin(), f->boxes.end(), [&leftBoxes](auto b) {
-        return b.ownColor == leftBoxes.front().ownColor;
-    });
-    frontBox.targetColor = (colors.front() == frontBox.ownColor)
-            ? colors.back() : colors.front();
-
-    Box& backBox = *std::find_if(f->boxes.begin(), f->boxes.end(), [&leftBoxes](auto b) {
-        return b.ownColor == leftBoxes.back().ownColor;
-    });
-    backBox.targetColor = (colors.front() == backBox.ownColor)
-            ? colors.back() : colors.front();
 }
 
 
@@ -206,12 +182,14 @@ bool FieldGenerator::tryPutBox(Box box) {
     if(!isBoxPositionValid(box)) {
         return false;
     }
+
     for (Box& putBox: f->boxes) {
         if(getFreeZone(box).overlaps(putBox.location) ||
            getFreeZone(putBox).overlaps(box.location) ||
            box.location.overlaps(putBox.location)) {
             return false;
         }
+
     }
     if(isAroundParkingZone(box) ||
        f->parkingZone.location.overlaps(getFreeZone(box)) ||
@@ -220,12 +198,6 @@ bool FieldGenerator::tryPutBox(Box box) {
     }
     f->boxes.push_back(box);
     auto loc = box.location;
-    freePoints.erase(std::remove_if(freePoints.begin(), freePoints.end(),
-            [&loc](auto point) {
-                return point.x >= (loc.left - Field::CELL_SIZE * 3) &&
-                       point.x <= (loc.right + Field::CELL_SIZE * 3) &&
-                       point.y >= (loc.top - Field::CELL_SIZE * 3) &&
-                       point.y <= (loc.bottom + Field::CELL_SIZE * 3);}), freePoints.end());
 
     return true;
 }
