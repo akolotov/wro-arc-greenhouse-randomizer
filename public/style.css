@@ -17,6 +17,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     align-content: flex-start;
+    padding-bottom: 24px;
 }
 
 #encoded-field {

@@ -14,6 +14,8 @@ public:
 
     Field generate();
 
+    std::list<Point> getPath() const;
+
     // zone that should be free of field objects
     static Rect getFreeZone(const Box& b);
 
@@ -29,6 +31,7 @@ private:
 
     void updateFreePoints();
     bool isPassable() const;
+    bool collidesWithAnyObject(Circle c) const;
     bool isBoxPositionValid(const Box& b) const;
 
     static ParkingZone randParkingZone();
@@ -39,6 +42,9 @@ private:
     static std::default_random_engine rand;
 
     std::vector<Point> freePoints;
+    mutable std::list<Point> validPath; // from last box to parking zone;
+
+    std::optional<std::list<Point>> tryReach(const Point &start, const std::function<bool(const Point&)>& hasArrived) const;
 };
 
 

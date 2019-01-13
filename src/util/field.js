@@ -2,9 +2,13 @@
 
 import Color from './color';
 
+
+
 export default class Field {
 
     constructor(descr) {
+        this.err = descr.err;
+
         function isPoint(p) {
             return typeof p.x === 'number' && typeof p.y === 'number';
         }
@@ -14,17 +18,21 @@ export default class Field {
                 typeof p.bott === 'number' && typeof p.right === 'number';
         }
 
-        function isValidArrayOf(arr, num, validator_callback) {
-            if(!Array.isArray(arr) || arr.length !== num) return false;
+        function isValidArrayOf(arr, validator_callback) {
             for(let v of arr) {
                 if(!validator_callback(v)) return false;
             }
             return true;
         }
 
+        function isValidArrayOfN(arr, num, validator_callback) {
+            if(!Array.isArray(arr) || arr.length !== num) return false;
+            return isValidArrayOf(arr, validator_callback);
+        }
+
         if(typeof descr === 'undefined' || descr === null) throw Error("Field description is undefined or null");
 
-        if(isValidArrayOf(descr.parkingZone, 4, isPoint)) { // all elements are points
+        if(isValidArrayOfN(descr.parkingZone, 4, isPoint)) { // all elements are points
 
             this.parkingZone = descr.parkingZone;
 
@@ -38,26 +46,34 @@ export default class Field {
             throw Error("'parkingZoneDirection' field of the description should be an point; Got " + descr.parkingZoneDirection);
         }
 
-        if(isValidArrayOf(descr.boxes, 5, isRect)) { // all elements are rects
+        if(isValidArrayOfN(descr.boxes, 5, isRect)) { // all elements are rects
             this.boxes = descr.boxes;
 
         } else {
             throw Error("'boxes' field of the description should be an array of five rects; Got " + descr.boxes);
         }
 
-        if(isValidArrayOf(descr.boxColors, 5, v => typeof Color.hasOwnProperty(v))) {
+        if(isValidArrayOfN(descr.boxColors, 5, v => typeof Color.hasOwnProperty(v))) {
             this.boxColors = descr.boxColors;
 
         } else {
             throw Error("'boxColors' field of the description should be an array of five strings denoting colors; Got " + descr.boxColors);
         }
 
-        if(isValidArrayOf(descr.cubeColors, 5, v => typeof Color.hasOwnProperty(v))) {
+        if(isValidArrayOfN(descr.cubeColors, 5, v => typeof Color.hasOwnProperty(v))) {
             this.cubeColors = descr.cubeColors;
 
         } else {
             throw Error("'cubeColors' field of the description should be an array of five strings denoting colors; Got " + descr.cubeColors);
         }
+
+        if(isValidArrayOf(descr.path, isPoint)) {
+            this.path = descr.path;
+
+        } else {
+            throw Error("'path' field of the description should be an array of points; Got " + descr.path);
+        }
+
     }
 
 

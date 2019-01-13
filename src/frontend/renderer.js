@@ -1,26 +1,25 @@
 
 'use strict';
 
-import * as PIXI from 'pixi.js';
 import Color from '../util/color';
 import {encodePoint} from '../util/encode_field';
 import {nextIntIn} from "../util/random";
+import * as PIXI from 'pixi.js';
 
+const SM_TO_PX_COEFF = 4;
 const WIDTH = sm_to_px(2300)+1;
 const HEIGHT = sm_to_px(2300)+1;
 
 const MARGIN = 30;
 
-var app = null;
-
+let app = null;
+let mouseTextObj = null;
 
 
 // field - an object of type Field, containing the description of the field to render
 // encoded_descr - a string with some important data about the field
 export function render(field, encoded_descr) {
     createApp();
-
-    drawBorder();
 
     // draw letters on field border (as in the sea battle game)
     for (let i = 1; i <= 20; i++) {
@@ -29,11 +28,13 @@ export function render(field, encoded_descr) {
     }
 
     // draw crosses on the field
-    for (let i = sm_to_px(115); i <= sm_to_px(2300); i += sm_to_px(115)) {
-        for (let j = sm_to_px(115); j <= sm_to_px(2300); j += sm_to_px(115)) {
+    for (let i = 0; i <= sm_to_px(2300); i += sm_to_px(115)) {
+        for (let j = 0; j <= sm_to_px(2300); j += sm_to_px(115)) {
             drawCross(MARGIN + i, MARGIN + j, 5);
         }
     }
+
+    drawBorder();
 
     drawParkingZone(...field.parkingZone);
     for(let i = 0; i < 5; i++) {
@@ -44,6 +45,7 @@ export function render(field, encoded_descr) {
                 Color[field.cubeColors[i]].value);
         }
     }
+
 
     // draw strings with field element coordinates
     let descr = document.getElementById("field-descr");
@@ -117,6 +119,12 @@ function initPixi() {
 
 
 
+function sm_to_px(sm) {
+    return sm / SM_TO_PX_COEFF;
+}
+
+
+
 function drawBorder() {
     let border = new PIXI.Graphics();
 
@@ -133,21 +141,17 @@ function drawBorder() {
 
 
 
-function sm_to_px(sm) {
-    return sm / 4.0;
-}
-
 function drawCross(x, y, size) {
-    let border = new PIXI.Graphics();
+    let cross = new PIXI.Graphics();
 
-    border.lineStyle(1, 0x000000);
+    cross.lineStyle(1, 0x888888);
 
-    border.moveTo(x - size / 2, y);
-    border.lineTo(x + size / 2, y);
-    border.moveTo(x, y - size / 2);
-    border.lineTo(x, y + size / 2);
+    cross.moveTo(x - size / 2, y);
+    cross.lineTo(x + size / 2, y);
+    cross.moveTo(x, y - size / 2);
+    cross.lineTo(x, y + size / 2);
 
-    app.stage.addChild(border);
+    app.stage.addChild(cross);
 }
 
 
@@ -157,37 +161,37 @@ function drawParkingZone(p1, p2, p3, p4) {
         p.push({ x: MARGIN + sm_to_px(arguments[i].x),
                  y: MARGIN + sm_to_px(arguments[i].y) });
     }
-    let border = new PIXI.Graphics();
+    let contour = new PIXI.Graphics();
 
-    border.lineStyle(3, 0x00AA00);
-    border.moveTo(0, 0);
-    border.lineTo(p[1].x - p[0].x, p[1].y - p[0].y);
+    contour.lineStyle(3, 0x00AA00);
+    contour.moveTo(0, 0);
+    contour.lineTo(p[1].x - p[0].x, p[1].y - p[0].y);
 
-    border.lineStyle(3, 0x000000);
-    border.lineTo(p[2].x - p[0].x, p[2].y - p[0].y);
-    border.lineTo(p[3].x - p[0].x, p[3].y - p[0].y);
+    contour.lineStyle(3, 0x000000);
+    contour.lineTo(p[2].x - p[0].x, p[2].y - p[0].y);
+    contour.lineTo(p[3].x - p[0].x, p[3].y - p[0].y);
 
-    border.pivot.x = (p[2].x - p[0].x) / 2;
-    border.pivot.y = (p[2].y - p[0].y) / 2;
+    contour.pivot.x = (p[2].x - p[0].x) / 2;
+    contour.pivot.y = (p[2].y - p[0].y) / 2;
 
-    border.position.x = (p[0].x + p[2].x) / 2;
-    border.position.y = (p[0].y + p[2].y) / 2;
+    contour.position.x = (p[0].x + p[2].x) / 2;
+    contour.position.y = (p[0].y + p[2].y) / 2;
 
-    app.stage.addChild(border);
+    app.stage.addChild(contour);
 }
 
 
 
 function drawBox(rect, color=0x0000FF, fill=true) {
-    let border = new PIXI.Graphics();
+    let box = new PIXI.Graphics();
 
-    border.lineStyle(1, 0x000000);
-    if(fill) border.beginFill(color);
-    border.drawRect(MARGIN + sm_to_px(rect.left), MARGIN + sm_to_px(rect.top),
+    box.lineStyle(1, 0x000000);
+    if(fill) box.beginFill(color);
+    box.drawRect(MARGIN + sm_to_px(rect.left), MARGIN + sm_to_px(rect.top),
                     sm_to_px(rect.right - rect.left), sm_to_px(rect.bott - rect.top));
-    if(fill) border.endFill();
+    if(fill) box.endFill();
 
-    app.stage.addChild(border);
+    app.stage.addChild(box);
 }
 
 
@@ -198,4 +202,6 @@ function drawText(x, y, text) {
     textObj.y = y;
 
     app.stage.addChild(textObj);
+
+    return textObj;
 }

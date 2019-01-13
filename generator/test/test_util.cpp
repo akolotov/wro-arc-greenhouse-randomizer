@@ -18,5 +18,11 @@ int main() {
 
     assert(q.overlaps(Rect {1, 2, 10, 10}));
 
-    assert(dist({0, 0}, {100, 0}) == 100);
+    Point p {0, 0};
+    assert(p.distance({100, 0}) == 100);
+
+    bool yes = Circle {p, 400}.overlaps(q);
+    bool no = ! Circle {Point {100, 100}, 40}.overlaps(q);
+    assert(yes);
+    assert(no);
 }

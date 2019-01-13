@@ -13,7 +13,7 @@
 
 class FieldJsonSerializer {
 public:
-    static std::string serialize(const Field& f) {
+    static std::string serialize(const Field& f, const std::list<Point>& path) {
         std::stringstream ss;
         ss << "{\n";
         ss << collectionToString<Point, Point>("parkingZone",
@@ -38,7 +38,9 @@ public:
                                           f.boxes.begin(),
                                           f.boxes.end(),
                                           [](Box b) { return "\""+colorString(b.targetColor)+"\""; });
-        ss << "\n";
+        ss << ",\n";
+
+        ss << collectionToString<Point, Point> ("path", path.begin(), path.end(), [](Point p) { return p; });
         ss << "}";
 
         return ss.str();

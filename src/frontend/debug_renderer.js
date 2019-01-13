@@ -1,3 +1,5 @@
+import * as PIXI from "pixi.js";
+
 function drawParkingZoneFreeZone(p1, p2, p3, p4) {
     for (let i = 0; i < arguments.length; i++) {
         arguments[i].x = sm_to_px(arguments[i].x);
@@ -16,5 +18,26 @@ function drawParkingZoneFreeZone(p1, p2, p3, p4) {
     border.drawCircle(p4.x, p4.y, sm_to_px(460));
 
     app.stage.addChild(border);
+
+}
+
+
+function drawPath(field) {
+    let circles = new PIXI.Graphics();
+    circles.lineStyle(2, 0xAA00AA);
+    for(let p of field.path) {
+        let destX = MARGIN + sm_to_px(p.x), destY = MARGIN + sm_to_px(p.y);
+        circles.drawCircle(destX, destY, sm_to_px(230));
+    }
+    app.stage.addChild(circles);
+
+    let path = new PIXI.Graphics();
+    path.lineStyle(2, 0x0000AA);
+    path.moveTo(MARGIN + sm_to_px(field.path[0].x), MARGIN + sm_to_px(field.path[0].y));
+    for(let p of field.path) {
+        let destX = MARGIN + sm_to_px(p.x), destY = MARGIN + sm_to_px(p.y);
+        path.lineTo(destX, destY);
+    }
+    app.stage.addChild(path);
 
 }

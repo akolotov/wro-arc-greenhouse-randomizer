@@ -1,10 +1,13 @@
 #include <iostream>
+#include <fstream>
+#include <chrono>
+#include <iterator>
 #include "Field.hpp"
 #include "FieldGenerator.hpp"
 #include "FieldJsonSerializer.hpp"
 
 
-int main() {
+int main(int argc, char** argv) {
 
     FieldGenerator generator;
 
@@ -13,7 +16,15 @@ int main() {
         try {
             Field f = generator.generate();
 
-            std::cout << FieldJsonSerializer::serialize(f);
+            auto json = FieldJsonSerializer::serialize(f, generator.getPath());
+            std::cout << json;
+
+            if(argc > 2 && strcmp(argv[1], "log") == 0) {
+                using namespace std::chrono;
+                std::ofstream out("generator-log.txt", std::ios_base::app);
+                auto t = system_clock::to_time_t(system_clock::now());
+                out << std::ctime(&t) << "\n" << json << "\n\n===================================\n";
+            }
 
             return 0;
 

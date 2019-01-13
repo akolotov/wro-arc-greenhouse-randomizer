@@ -40,6 +40,11 @@ public:
         std::copy(l.begin(), l.end(), parameters.begin());
     }
 
+    void set(const Precision& x, const Precision& y) {
+        parameters[0] = x;
+        parameters[1] = y;
+    }
+
     Vector& normalize() {
         *this = normalized();
         return *this;
@@ -118,21 +123,12 @@ public:
 
 
     template<size_t Dims = Dimensions, typename VPrecision>
-    Vector operator*(const Vector<Dims, VPrecision>& v) const {
-        Vector res = *this;
-        res *= v;
-        return res;
-    }
-
-
-
-    template<size_t Dims = Dimensions, typename VPrecision>
-    Vector& operator*=(const Vector<Dims, VPrecision>& v) {
-        std::cerr << v << "\n";
-        for(size_t i = 0; i < Dims; i++) {
-            this->parameters[i] *= v.getParameter(i);
+    Precision operator*(const Vector<Dims, VPrecision>& v) const {
+        Precision sum {0};
+        for (size_t i = 0; i < Dimensions; i++) {
+            sum += parameters.at(i) * v.parameters.at(i);
         }
-        return *this;
+        return sum;
     }
 
 

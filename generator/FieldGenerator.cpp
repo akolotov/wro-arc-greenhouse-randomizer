@@ -4,6 +4,9 @@
 
 #include <queue>
 #include <set>
+#include <unordered_set>
+#include <map>
+#include <iterator>
 #include "FieldGenerator.hpp"
 
 
@@ -28,7 +31,7 @@ Field FieldGenerator::generate() {
     f = new Field(zone);
 
     updateFreePoints();
-    
+
     int count = 0;
     std::uniform_int_distribution dist(0, (int)freePoints.size() - 1);
     while(count < 5) {
@@ -58,12 +61,19 @@ Field FieldGenerator::generate() {
 }
 
 
+
+std::list<Point> FieldGenerator::getPath() const {
+    return validPath;
+}
+
+
+
 // zone that should be free of field objects
 Rect FieldGenerator::getFreeZone(const Box& b) {
     int min = min4(b.location.left, b.location.top,
                    Field::SIZE - b.location.right, Field::SIZE - b.location.bottom);
 
-    Rect freeZone(0, 0, 0, 0);
+    Rect freeZone(0, 0, 1, 1);
     if(min == b.location.left) {
         freeZone.left = b.location.right;
         freeZone.top = b.location.center().y - FREE_ZONE_SIZE / 2;
@@ -99,8 +109,8 @@ Rect FieldGenerator::getFreeZone(const Box& b) {
 bool FieldGenerator::isAroundParkingZone(const Box& box) const {
     auto loc = f->parkingZone.location;
     auto contains = [loc](Point point) -> bool {
-        return dist(point, loc.points[0]) < 460 ||
-               dist(point, loc.points[3]) < 460;
+        return point.distance(loc.points[0]) < 460 ||
+               point.distance(loc.points[3]) < 460;
         };
 
 
@@ -115,12 +125,115 @@ bool FieldGenerator::isPassable() const {
         throw std::runtime_error("Passability Check Error: Boxes generation stage is incomplete!");
     }
 
+    Box& blueBox = *std::find_if(f->boxes.begin(), f->boxes.end(),
+            [](auto& box) { return box.ownColor == Color::Blue; });
+
+    auto& nextBox = *std::find_if(f->boxes.begin(), f->boxes.end(),
+            [&blueBox](auto b) { return b.ownColor == blueBox.targetColor; });
+
+    auto& lastBox = *std::find_if(f->boxes.begin(), f->boxes.end(),
+            [&nextBox](auto b) { return b.ownColor == nextBox.targetColor; });
+
+    Rect start = getFreeZone(lastBox);
+    Point robotCenter = start.center();
 
 
-    return true;
+    auto res = tryReach(robotCenter,
+                        [&nextBox](const Point& pos) {
+                            return pos == getFreeZone(nextBox).center();
+                        });
+    bool nextBoxIsReachable = res.has_value();
+    if(nextBoxIsReachable) {
+        validPath.insert(validPath.end(), res.value().begin(), res.value().end());
+        res = tryReach(getFreeZone(nextBox).center(),
+                            [&blueBox](const Point& pos) {
+                                return pos == getFreeZone(blueBox).center();
+                            });
+        bool blueBoxIsReachable = res.has_value();
+        if (blueBoxIsReachable) {
+            validPath.insert(validPath.end(), res.value().begin(), res.value().end());
+
+            res = tryReach(getFreeZone(blueBox).center(),
+                                   [this](const Point &pos) -> bool {
+                                       auto loc = f->parkingZone.location;
+                                       auto p0 = loc.points[0], p1 = loc.points[3];
+                                       return Circle(pos, Field::CELL_SIZE * 2).contains((p1 - p0) / 2 + p0);
+                                   });
+            bool parkingZoneIsReachable = res.has_value();
+            if(parkingZoneIsReachable) {
+                validPath.insert(validPath.end(), res.value().begin(), res.value().end());
+            } else {
+                validPath.clear();
+            }
+            return parkingZoneIsReachable;
+        }
+    }
+
+    return false;
 }
 
 
+
+std::optional<std::list<Point>> FieldGenerator::tryReach(const Point &start,
+                                                         const std::function<bool(const Point &)>& hasArrived) const {
+    std::queue<Point> wave;
+    wave.push(start);
+    std::unordered_set<Point> visited;
+    std::unordered_map<Point, Point> previousOf;
+
+    visited.insert(wave.front());
+    while(!wave.empty()) {
+        Point currCenter = wave.front();
+        wave.pop();
+
+        for(int dx = -Field::CELL_SIZE; dx <= Field::CELL_SIZE; dx += Field::CELL_SIZE) {
+            for(int dy = -Field::CELL_SIZE; dy <= Field::CELL_SIZE; dy += Field::CELL_SIZE) {
+
+                Point newCenter = currCenter + Point {dx, dy};
+                Circle robotCircle {newCenter, Field::CELL_SIZE * 2 - 1};
+
+                if((dy != 0 || dx != 0) && (visited.find(newCenter) == visited.end())
+                   && Field::FieldRect().shrinked(Field::CELL_SIZE * 2).contains(newCenter)) {
+                    if (hasArrived(newCenter)) {
+                        previousOf.insert({newCenter, currCenter});
+
+                        std::list<Point> path;
+                        path.push_front(newCenter);
+
+                        while(path.front() != start) {
+                            path.push_front(previousOf.at(path.front()));
+
+                        }
+
+                        return path;
+
+                    } else if (!collidesWithAnyObject(robotCircle)) {
+                        previousOf.insert({newCenter, currCenter});
+                        wave.push(newCenter);
+                        visited.insert(newCenter);
+                    }
+                }
+            }
+        }
+    }
+    return {};
+}
+
+
+
+bool FieldGenerator::collidesWithAnyObject(Circle c) const {
+    auto& pts = f->parkingZone.location.points;
+    Circle approxLocation ((pts[2] - pts[0])/2 + pts[0], ((pts[0] - pts[2]) / 2).distance({0, 0}));
+    if (c.overlaps(approxLocation)) {
+        return true;
+    }
+    for(auto& box: f->boxes) {
+        if (c.overlaps(box.location)) {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 
@@ -158,8 +271,10 @@ void FieldGenerator::generateTargetColors() {
     blueBox.targetColor = colors.at(0);
     colors.at(0) = Color::Blue;
 
-    auto& nextBox = *std::find_if(f->boxes.begin(), f->boxes.end(), [&blueBox](auto b) { return b.ownColor == blueBox.targetColor; });
-    nextBox.targetColor = *std::find_if(colors.begin(), colors.end(), [&nextBox](auto c) { return nextBox.ownColor != c && c != Color::Blue; });
+    auto& nextBox = *std::find_if(f->boxes.begin(), f->boxes.end(),
+            [&blueBox](auto b) { return b.ownColor == blueBox.targetColor; });
+    nextBox.targetColor = *std::find_if(colors.begin(), colors.end(),
+            [&nextBox](auto c) { return nextBox.ownColor != c && c != Color::Blue; });
     colors.erase(std::remove(colors.begin(), colors.end(), nextBox.targetColor));
     for(auto& box: f->boxes) {
         if(box.ownColor != Color::Blue && box.ownColor != nextBox.ownColor) {
@@ -197,7 +312,6 @@ bool FieldGenerator::tryPutBox(Box box) {
         return false;
     }
     f->boxes.push_back(box);
-    auto loc = box.location;
 
     return true;
 }
@@ -223,7 +337,7 @@ void FieldGenerator::updateFreePoints() {
     auto& zone = f->parkingZone.location;
 
     std::remove_if(freePoints.begin(), freePoints.end(), [&zone](auto p) {
-        return dist(p, zone.points[0]) < 460 || dist(p, zone.points[3]) < 460;
+        return p.distance(zone.points[0]) < 460 || p.distance(zone.points[3]) < 460;
     });
 }
 
