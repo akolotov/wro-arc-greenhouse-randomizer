@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
             auto json = FieldJsonSerializer::serialize(f, generator.getPath());
             std::cout << json;
 
-            if(argc > 2 && strcmp(argv[1], "log") == 0) {
+            if(argc > 1 && strcmp(argv[1], "log") == 0) {
                 using namespace std::chrono;
                 std::ofstream out("generator-log.txt", std::ios_base::app);
                 auto t = system_clock::to_time_t(system_clock::now());

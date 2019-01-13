@@ -13,6 +13,7 @@
   "author": "Harrm",
   "dependencies": {
     "express": "^4.16.4",
+    "jspdf": "^1.5.3",
     "pixi.js": "^4.8.5",
     "qrcode": "^1.3.2"
   },

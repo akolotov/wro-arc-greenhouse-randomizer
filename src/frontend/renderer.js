@@ -101,7 +101,7 @@ function point(x, y) {
 function createApp() {
     initPixi();
     let canvas = document.getElementById("field-canvas");
-    app = new PIXI.Application({width: MARGIN + WIDTH, height: MARGIN + HEIGHT, view: canvas});
+    app = new PIXI.Application({width: MARGIN + WIDTH, height: MARGIN + HEIGHT, view: canvas, preserveDrawingBuffer: true});
     app.renderer.backgroundColor = 0xFFFFFF;
 }
 
