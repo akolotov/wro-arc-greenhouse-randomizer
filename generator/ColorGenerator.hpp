@@ -8,7 +8,12 @@
 #include "Field.hpp"
 
 
-
+/**
+ * Distributes colors between provided boxes.
+ * Each box has its own color and color of cubes atop the box
+ * A robot will start searching for blue box, and then will visit target box of blue one and target box of target box of the blue one O.o
+ * Cube colors are picked so that three target boxes are as far from each other as possible
+ */
 class ColorGenerator {
 public:
     ColorGenerator(std::list<Box>& boxes):
@@ -64,11 +69,6 @@ private:
     Box& getNextBox() const {
         return *std::find_if(boxes.begin(), boxes.end(),
                              [this](auto b) { return b.ownColor == getBlueBox().targetColor; });
-    }
-
-    Box& getLastBox() const {
-        return *std::find_if(boxes.begin(), boxes.end(),
-                             [this](auto b) { return b.ownColor == getNextBox().targetColor; });
     }
 
     Box& getFarthestBoxFrom(const Box& box) const {
