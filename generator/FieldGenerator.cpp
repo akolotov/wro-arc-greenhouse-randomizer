@@ -37,7 +37,7 @@ Field FieldGenerator::generate() {
     updateFreePoints();
 
     int count = 0;
-    std::normal_distribution<> dist(0.75, );
+    std::binomial_distribution<> dist(freePoints.size() - 1, 0.7);
     while(count < 5) {
         auto p = std::begin(freePoints) + dist(rand);
         if(tryPutBox(Box(*p))) {
@@ -48,7 +48,7 @@ Field FieldGenerator::generate() {
         if(freePoints.empty()) {
             throw std::runtime_error("Generation failed: Couldn't arrange the boxes");
         }
-        dist = std::uniform_int_distribution(0, (int)freePoints.size() - 1);
+        dist = std::binomial_distribution<>(freePoints.size() - 1, 0.7);
     }
 
     generateColors();
