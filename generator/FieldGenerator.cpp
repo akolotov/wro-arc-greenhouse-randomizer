@@ -8,7 +8,7 @@
 #include <map>
 #include <iterator>
 #include "FieldGenerator.hpp"
-
+#include "ColorGenerator.hpp"
 
 
 std::default_random_engine FieldGenerator::rand(time(NULL));
@@ -51,8 +51,8 @@ Field FieldGenerator::generate() {
         dist = std::binomial_distribution<>(freePoints.size() - 1, 0.5);
     }
 
-    generateColors();
-    generateTargetColors();
+    ColorGenerator c(f->boxes);
+    c.generate();
 
     if (!isPassable()) {
         throw std::runtime_error("Generation failed: Field is not passable");
@@ -246,53 +246,6 @@ int FieldGenerator::minDistToWall(const Box& b) const {
             Field::SIZE - b.location.bottom, Field::SIZE - b.location.right);
 }
 
-
-
-void FieldGenerator::generateColors() {
-    if(f == nullptr || f->boxes.size() != 5) {
-        throw std::runtime_error("Color Generation Error: Boxes generation stage is incomplete!");
-    }
-
-    std::vector<Color> colors = {Color::Blue, Color::Green, Color::Orange, Color::Red, Color::Yellow};
-
-    auto it = f->boxes.begin();
-    for (size_t i = 0; i < 5; ++i) {
-        it->ownColor = colors.at(i);
-        it++;
-    }
-}
-
-
-void FieldGenerator::generateTargetColors() {
-    if(f == nullptr || f->boxes.size() != 5) {
-        throw std::runtime_error("Target Color Generation Error: Boxes generation stage is incomplete!");
-    }
-
-    std::vector<Color> colors = {Color::Green, Color::Orange, Color::Red, Color::Yellow};
-    std::shuffle(colors.begin(), colors.end(), rand);
-
-    auto& blueBox = *std::find_if(f->boxes.begin(), f->boxes.end(), [](auto b) { return b.ownColor == Color::Blue; });
-    blueBox.targetColor = colors.at(0);
-    colors.at(0) = Color::Blue;
-
-    auto& nextBox = *std::find_if(f->boxes.begin(), f->boxes.end(),
-            [&blueBox](auto b) { return b.ownColor == blueBox.targetColor; });
-    nextBox.targetColor = *std::find_if(colors.begin(), colors.end(),
-            [&nextBox](auto c) { return nextBox.ownColor != c && c != Color::Blue; });
-    colors.erase(std::remove(colors.begin(), colors.end(), nextBox.targetColor));
-    for(auto& box: f->boxes) {
-        if(box.ownColor != Color::Blue && box.ownColor != nextBox.ownColor) {
-            auto it = std::find_if(colors.begin(), colors.end(), [&box](auto c) { return box.ownColor != c; });
-            if(it != colors.end()) {
-                box.targetColor = *it;
-                colors.erase(it);
-            } else {
-                box.targetColor = colors.front();
-                std::swap(box.targetColor, nextBox.targetColor);
-            }
-        }
-    }
-}
 
 
 // return true and updates free points if a box is put successfully

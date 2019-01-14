@@ -26,8 +26,6 @@ private:
     int minDistToWall(const Box& b) const;
 
     bool tryPutBox(Box box);
-    void generateColors();
-    void generateTargetColors();
 
     void updateFreePoints();
     bool isPassable() const;

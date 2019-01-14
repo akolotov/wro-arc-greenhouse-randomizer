@@ -8,5 +8,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 enable_testing()
 add_subdirectory(test ${PROJECT_BINARY_DIR}/test)
 
-set(SRC main FieldGenerator FieldJsonSerializer)
+set(SRC main FieldGenerator FieldJsonSerializer ColorGenerator)
 add_executable(generator ${SRC})
