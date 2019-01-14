@@ -4,11 +4,12 @@
   "description": "",
   "private": true,
   "scripts": {
+
     "build": "babel src --out-dir src.transpiled --source-maps",
     "pack": "webpack",
-    "start": "bash scripts/run-server.sh",
+    "start": "node src.transpiled/server/app.js",
     "test": "npm run build && mocha src.transpiled/server/test && mocha src.transpiled/util/test",
-    "heroku-postbuild": "npm install"
+    "postinstall": "npm run build && npm run pack"
   },
   "author": "Harrm",
   "dependencies": {
