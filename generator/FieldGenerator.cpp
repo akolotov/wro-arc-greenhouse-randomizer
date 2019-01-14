@@ -17,11 +17,15 @@ std::default_random_engine FieldGenerator::rand(time(NULL));
 
 Field FieldGenerator::generate() {
 
+    freePoints.reserve(19*19);
     for(int i = 0; i <= 18; i++) {
         for (int j = 0; j <= 18; ++j) {
             freePoints.emplace_back(Point {i * 115, j * 115});
         }
     }
+    std::sort(freePoints.begin(), freePoints.end(), [](auto p1, auto p2) {
+        return p1.distance(Field::FieldRect().center()) > p2.distance(Field::FieldRect().center());
+    });
 
     ParkingZone zone = randParkingZone();
     while(minDistToWall(zone.location.points[3]) < 460) {
@@ -33,7 +37,7 @@ Field FieldGenerator::generate() {
     updateFreePoints();
 
     int count = 0;
-    std::uniform_int_distribution dist(0, (int)freePoints.size() - 1);
+    std::normal_distribution<> dist(0.75, );
     while(count < 5) {
         auto p = std::begin(freePoints) + dist(rand);
         if(tryPutBox(Box(*p))) {
