@@ -13,7 +13,6 @@ const HEIGHT = sm_to_px(2300)+1;
 const MARGIN = 30;
 
 let app = null;
-let mouseTextObj = null;
 
 
 // field - an object of type Field, containing the description of the field to render
@@ -33,8 +32,6 @@ export function render(field, encoded_descr) {
             drawCross(MARGIN + i, MARGIN + j, 5);
         }
     }
-
-    drawBorder();
 
     drawParkingZone(...field.parkingZone);
     for(let i = 0; i < 5; i++) {
@@ -88,6 +85,7 @@ export function render(field, encoded_descr) {
         descr.appendChild(boxDescr);
     }
 
+    drawBorder();
 }
 
 
@@ -101,7 +99,7 @@ function point(x, y) {
 function createApp() {
     initPixi();
     let canvas = document.getElementById("field-canvas");
-    app = new PIXI.Application({width: MARGIN + WIDTH, height: MARGIN + HEIGHT, view: canvas, preserveDrawingBuffer: true});
+    app = new PIXI.Application({width: MARGIN + WIDTH + 5, height: MARGIN + HEIGHT + 5, view: canvas, preserveDrawingBuffer: true});
     app.renderer.backgroundColor = 0xFFFFFF;
 }
 
@@ -131,9 +129,9 @@ function drawBorder() {
     border.lineStyle(5, 0x000000);
 
     border.moveTo(MARGIN, MARGIN);
-    border.lineTo(MARGIN + WIDTH - 2, MARGIN);
-    border.lineTo(MARGIN + WIDTH - 2, MARGIN + HEIGHT - 3);
-    border.lineTo(MARGIN, MARGIN + HEIGHT - 3);
+    border.lineTo(MARGIN + WIDTH, MARGIN);
+    border.lineTo(MARGIN + WIDTH, MARGIN + HEIGHT);
+    border.lineTo(MARGIN, MARGIN + HEIGHT);
     border.lineTo(MARGIN, MARGIN);
 
     app.stage.addChild(border);
