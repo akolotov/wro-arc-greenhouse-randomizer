@@ -17,8 +17,8 @@ std::default_random_engine FieldGenerator::rand(time(NULL));
 
 Field FieldGenerator::generate() {
 
-    for(int i = 1; i < 18; i++) {
-        for (int j = 1; j < 18; ++j) {
+    for(int i = 0; i <= 18; i++) {
+        for (int j = 0; j <= 18; ++j) {
             freePoints.emplace_back(Point {i * 115, j * 115});
         }
     }
