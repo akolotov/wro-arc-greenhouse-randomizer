@@ -48,7 +48,7 @@ Field FieldGenerator::generate() {
         if(freePoints.empty()) {
             throw std::runtime_error("Generation failed: Couldn't arrange the boxes");
         }
-        dist = std::binomial_distribution<>(freePoints.size() - 1, 0.7);
+        dist = std::binomial_distribution<>(freePoints.size() - 1, 0.5);
     }
 
     generateColors();
