@@ -13,36 +13,32 @@
 <body>
 
     <header>
-        <img src="logo.png" style="margin-right: auto;">
+        <img src="logo.png" style="margin-right: auto; padding-bottom: 30px">
     </header>
 
-    <div style="display: flex; justify-content: center; align-content: center; width: 100%;">
-        <button style="background-color: orange;" onclick="location.reload();">
-            <p style="font-family: monospace; font-size: 2em; color: white">
+    <div style="padding-bottom: 5%">
+        <button style="background-color: orange; width: 30%; margin-left: 10%; margin-right: 10%" onclick="location.reload();">
+            <p style="font-family: 'Montserrat Regular', Montserrat, sans-serif; font-size: 2em; color: white">
                 RE-GENERATE
             </p>
         </button>
 
-        <button id="get-pdf-button" style="background-color: red;">
-            <p style="font-family: monospace; font-size: 2em; color: white">
+        <button id="get-pdf-button" style="background-color: red; width: 30%; margin-left: 10%; margin-right: 9%">
+            <p style="font-family: 'Montserrat Regular', Montserrat, sans-serif; font-size: 2em; color: white">
                 GET PDF
             </p>
         </button>
     </div>
 
-    <div>
-        <div id="field-view">
-            <div id="field-descr">
-
-            </div>
-            <canvas id="field-canvas"></canvas>
+    <div id="field-view">
+        <div id="field-descr">
         </div>
+        <canvas id="field-canvas"></canvas>
+    </div>
 
-        <div class="column">
-            <p id="encoded-field" class="row"></p>
-            <canvas id="qr-code" class="row"></canvas>
-        </div>
-
+    <div class="column">
+        <p id="encoded-field" class="row"></p>
+        <canvas id="qr-code" class="row"></canvas>
     </div>
 
     <footer style="background-color: lightgrey; padding: 8px;">
