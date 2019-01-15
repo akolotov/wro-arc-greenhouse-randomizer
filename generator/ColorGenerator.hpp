@@ -79,16 +79,25 @@ private:
     }
 
     Box& getFarthestBoxFrom(const Box& box1, const Box& box2) const {
-        return *std::max_element(boxes.begin(), boxes.end(), [&box1, &box2](auto& currMax, auto& currBox) {
-            auto loc1 = box1.location.center();
-            auto loc2 = box2.location.center();
-            auto dist1toCurrBox = currBox.location.center().distance(loc1);
-            auto dist2toCurrBox = currBox.location.center().distance(loc2);
-            auto dist1toCurrMax = currMax.location.center().distance(loc1);
-            auto dist2toCurrMax = currMax.location.center().distance(loc2);
-            return dist1toCurrBox * dist1toCurrBox + dist2toCurrBox * dist2toCurrBox >
-                    dist1toCurrMax * dist1toCurrMax + dist2toCurrMax * dist2toCurrMax;
-        });
+        float maxDist {};
+        Box* currMax {};
+
+        auto loc1 = box1.location.center();
+        auto loc2 = box2.location.center();
+
+        for(auto& currBox: boxes) {
+            if(currBox.ownColor == box1.ownColor || currBox.ownColor == box2.ownColor)
+                continue;
+
+            float dist1toCurrBox = currBox.location.center().distance(loc1);
+            float dist2toCurrBox = currBox.location.center().distance(loc2);
+
+            if(dist1toCurrBox + dist2toCurrBox >= maxDist) {
+                maxDist = dist1toCurrBox + dist2toCurrBox;
+                currMax = &currBox;
+            }
+            return *currMax;
+        }
     }
 
     std::list<Box>& boxes;
