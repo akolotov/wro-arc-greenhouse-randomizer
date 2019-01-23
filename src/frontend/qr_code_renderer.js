@@ -11,7 +11,7 @@ export default function createQR(field, code) {
     let encoded_text = document.getElementById("encoded-field");
     encoded_text.appendChild(document.createTextNode(code));
 
-    QRCode.toCanvas(canvas, encodeField(field),
+    QRCode.toCanvas(canvas, code,
         {
             width: 412,
             height: 412,
