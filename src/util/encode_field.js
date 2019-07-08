@@ -28,15 +28,24 @@ export default function encodeField(field) {
 
     // blue box
     let blueIdx = field.boxColors.indexOf("Blue");
-    res += encodeBox(field.boxes[blueIdx], nextIntIn(0, 2));
+    let blueBox = encodeBox(field.boxes[blueIdx], nextIntIn(0, 2));
 
     // first box
     let firstIdx = field.boxColors.indexOf(field.cubeColors[blueIdx]);
-    res += encodeBox(field.boxes[firstIdx], nextIntIn(0, 2));
+    let firstBox = encodeBox(field.boxes[firstIdx], nextIntIn(0, 2));
 
     // second box
     let secondIdx = field.boxColors.indexOf(field.cubeColors[firstIdx]);
-    res += encodeBox(field.boxes[secondIdx], nextIntIn(0, 2));
+    let secondBox = encodeBox(field.boxes[secondIdx], nextIntIn(0, 2));
+    
+    let tmpList = [blueBox, firstBox , secondBox];
+
+    let tmp = nextIntIn(0,3);
+    res += tmpList[tmp];
+    tmpList.splice(tmp, 1 );
+    tmp = nextIntIn(0,2);
+    res += tmpList[tmp];
+    res += tmpList[1-tmp];
 
     return res;
 }
