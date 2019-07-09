@@ -58,6 +58,9 @@ export function render(field, encoded_descr) {
     let firstIdx = field.boxColors.indexOf(field.cubeColors[blueIdx]);
     let secondIdx = field.boxColors.indexOf(field.cubeColors[firstIdx]);
 
+
+    let order_counter = 1;  //counter to keep the same random order from the randomness process
+    
     for(let i = 0; i < 5; i++) {
         let boxDescr = document.createElement("p");
         let p1;
@@ -73,10 +76,7 @@ export function render(field, encoded_descr) {
             p2 = encodePoint(p2);
 
         } else {
-            let start = (i === blueIdx) ? 9
-                      : (i === firstIdx) ? 18
-                      : (i === secondIdx) ? 27
-                      : undefined;
+            let start = (order_counter++)*9;
             p1 = encoded_descr.slice(start + 1, start + 4);
             p2 = encoded_descr.slice(start + 5, start + 8);
         }
