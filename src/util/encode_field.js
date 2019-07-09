@@ -40,7 +40,7 @@ export default function encodeField(field) {
     
     let tmpList = [blueBox, firstBox , secondBox];
 
-    let tmp = nextIntIn(0,3);
+    let randomIdx = nextIntIn(0,3);
     res += tmpList[tmp];
     tmpList.splice(tmp, 1 );
     tmp = nextIntIn(0,2);
