@@ -38,14 +38,15 @@ export default function encodeField(field) {
     let secondIdx = field.boxColors.indexOf(field.cubeColors[firstIdx]);
     let secondBox = encodeBox(field.boxes[secondIdx], nextIntIn(0, 2));
     
-    let tmpList = [blueBox, firstBox , secondBox];
-
-    let tmp = nextIntIn(0,3);
-    res += tmpList[tmp];
-    tmpList.splice(tmp, 1 );
-    tmp = nextIntIn(0,2);
-    res += tmpList[tmp];
-    res += tmpList[1-tmp];
+    // randomize the order of boxes
+    let boxes = [blueBox, firstBox , secondBox];
+    
+    let randomIdx = nextIntIn(0,3);
+    res += boxes[randomIdx];
+    boxes.splice(randomIdx, 1 );
+    randomIdx = nextIntIn(0,2);
+    res += boxes[randomIdx];
+    res += boxes[1-randomIdx];
 
     return res;
 }
