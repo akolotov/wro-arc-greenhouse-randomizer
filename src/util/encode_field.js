@@ -38,7 +38,8 @@ export default function encodeField(field) {
     let secondIdx = field.boxColors.indexOf(field.cubeColors[firstIdx]);
     let secondBox = encodeBox(field.boxes[secondIdx], nextIntIn(0, 2));
     
-    let tmpList = [blueBox, firstBox , secondBox];
+    // randomize the order of boxes
+    let boxes = [blueBox, firstBox , secondBox];
 
     let randomIdx = nextIntIn(0,3);
     res += tmpList[tmp];
