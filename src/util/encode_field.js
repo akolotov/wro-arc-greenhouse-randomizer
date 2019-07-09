@@ -40,6 +40,7 @@ export default function encodeField(field) {
     
     // randomize the order of boxes
     let boxes = [blueBox, firstBox , secondBox];
+<<<<<<< HEAD
     
     let randomIdx = nextIntIn(0,3);
     res += boxes[randomIdx];
@@ -47,6 +48,15 @@ export default function encodeField(field) {
     randomIdx = nextIntIn(0,2);
     res += boxes[randomIdx];
     res += boxes[1-randomIdx];
+=======
+
+    let randomIdx = nextIntIn(0,3);
+    res += tmpList[tmp];
+    tmpList.splice(tmp, 1 );
+    tmp = nextIntIn(0,2);
+    res += tmpList[tmp];
+    res += tmpList[1-tmp];
+>>>>>>> b8b4436cbab29e1dde8b1c9dc9b4a6942e05ca83
 
     return res;
 }
