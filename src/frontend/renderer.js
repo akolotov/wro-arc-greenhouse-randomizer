@@ -65,21 +65,10 @@ export function render(field, encoded_descr) {
         let boxDescr = document.createElement("p");
         let p1;
         let p2;
-        if(i !== blueIdx && i !== firstIdx && i !== secondIdx) {
-            p1 = {x: field.boxes[i].right, y: field.boxes[i].top};
-            p2 = {x: field.boxes[i].left, y: field.boxes[i].bott};
-            if (nextIntIn(0, 2) === 0) {
-                p1 = {x: field.boxes[i].left, y: field.boxes[i].top};
-                p2 = {x: field.boxes[i].right, y: field.boxes[i].bott};
-            }
-            p1 = encodePoint(p1);
-            p2 = encodePoint(p2);
-
-        } else {
-            let start = (order_counter++)*9;
-            p1 = encoded_descr.slice(start + 1, start + 4);
-            p2 = encoded_descr.slice(start + 5, start + 8);
-        }
+        p1 = {x: field.boxes[i].right, y: field.boxes[i].top};
+        p2 = {x: field.boxes[i].left, y: field.boxes[i].bott};
+        p1 = encodePoint(p1);
+        p2 = encodePoint(p2);
         boxDescr.appendChild(document.createTextNode(field.boxColors[i] + ": (" + p1 + " " + p2 + ")"));
         boxDescr.setAttribute("class", "descr-paragraph");
         descr.appendChild(boxDescr);
