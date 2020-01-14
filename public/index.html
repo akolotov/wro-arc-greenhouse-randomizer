@@ -17,15 +17,21 @@
     </header>
 
     <div style="padding-bottom: 5%">
-        <button style="background-color: orange; width: 30%; margin-left: 10%; margin-right: 10%" onclick="location.reload();">
+        <button style="background-color: orange; width: 20%; margin-left: 5%; margin-right: 5%" onclick="location.reload();">
             <p style="font-family: 'Montserrat Regular', Montserrat, sans-serif; font-size: 2em; color: white">
                 RE-GENERATE
             </p>
         </button>
 
-        <button id="get-pdf-button" style="background-color: red; width: 30%; margin-left: 10%; margin-right: 9%">
+        <button id="get-pdf-button-qualification" style="background-color: red; width: 20%; margin-left: 5%; margin-right: 9%">
             <p style="font-family: 'Montserrat Regular', Montserrat, sans-serif; font-size: 2em; color: white">
-                GET PDF
+                GET PDF (Qualification Rounds)
+            </p>
+        </button>
+
+        <button id="get-pdf-button-final" style="background-color: red; width: 20%; margin-left: 5%; margin-right: 9%">
+            <p style="font-family: 'Montserrat Regular', Montserrat, sans-serif; font-size: 2em; color: white">
+                GET PDF (Final Rounds)
             </p>
         </button>
     </div>
@@ -33,16 +39,37 @@
     <div id="field-view">
         <div id="field-descr">
         </div>
-        <canvas id="field-canvas"></canvas>
+        <canvas id="field-canvas-final" style="z-index: 1; position: absolute;"></canvas>
+        <canvas id="field-canvas-qualification" style="z-index: 0; visibility: hidden; position: relative;"></canvas>
     </div>
 
     <div class="column">
-        <p id="encoded-field" class="row"></p>
-        <canvas id="qr-code" class="row"></canvas>
+        <div class="row">
+            <p id="true-encoded-field">The true QR-code's for the field is in the: </p>
+            <p id="encoded-field-top-right" class="row">top-right: </p>
+            <p id="encoded-field-top-left" class="row">top-left: </p>
+            <p id="encoded-field-bottom-left" class="row">bottom-left: </p>
+            <p id="encoded-field-bottom-right" class="row">bottom-right: </p>
+        </div>
+
+        <div id="qr-codes" class="row" style="background-color: white;">
+            <div class="qr-code top left">
+                <canvas id="qr-code-top-left" class="qr-code-canvas"></canvas>
+            </div> 
+            <div class="qr-code top right">
+                <canvas id="qr-code-top-right" class="qr-code-canvas"></canvas>
+            </div>
+            <div class="qr-code bottom left">
+                <canvas id="qr-code-bottom-left" class="qr-code-canvas"></canvas>
+            </div>
+            <div class="qr-code bottom right">
+                <canvas id="qr-code-bottom-right" class="qr-code-canvas"></canvas>
+            </div>
+          </div>
     </div>
 
     <footer style="background-color: lightgrey; padding: 8px;">
-        <p>Made by: Vladimir Shcherba</p>
+        <p>Made by: Vladimir Shcherba & Edited (2020) by: Hany Hamed</p>
         <p>Contact information: <a href="mailto:abrehchs@gmail.com">
             abrehchs@gmail.com</a>.</p>
     </footer>
